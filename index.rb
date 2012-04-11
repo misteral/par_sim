@@ -1,6 +1,7 @@
 require "rubygems"
 require 'open-uri'
 require 'nokogiri'
+require 'curb'
 require 'logger'
 Dir[File.dirname(__FILE__)+"/includes/*.rb"].each {|file| require file }
 
@@ -26,8 +27,11 @@ start.css('span div h3 a').each do |el1|
 end
 
 log.debug ("Readed "+pr.size.to_s+"categories.")
-
+txt = nil
+doc = nil
+start = nil
 #качаем то, что получили
+multy_get_from_hash(pr)
 
 #занесем в базу верхний уровень
 
