@@ -58,3 +58,18 @@
       false #файлы все существуют ничего качать не нужно
     end
   end
+
+  def mysql_connect(host,user,pass)
+    begin
+         con = Mysql2::Client.new(:host=>host,:username=>user, :password => pass)
+         rs = con.query 'SELECT VERSION()'
+         rs.each{|r| puts r}
+
+     rescue Mysql2::Error => e
+         @@log.error e.error_number
+         @@log.error e.sql_state
+
+     ensure
+         con.close if con
+    end
+  end
