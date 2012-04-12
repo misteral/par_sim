@@ -1,6 +1,7 @@
 # encoding: utf-8
-  def open_or_download(url,proxy)
-    file_name = ROOT_PATH+"/dw-sima/"+url[:name]+".html"
+  def open_or_download(url,proxy,path = "")
+
+    file_name = ROOT_PATH+"/dw-sima/"+path+url[:name]+".html"
     if File.exists?(file_name) and !File.zero?(file_name)
       text = open(file_name) { |f| f.read }
     else
@@ -59,17 +60,4 @@
     end
   end
 
-  def mysql_connect(host,user,pass)
-    begin
-         con = Mysql2::Client.new(:host=>host,:username=>user, :password => pass)
-         rs = con.query 'SELECT VERSION()'
-         rs.each{|r| puts r}
 
-     rescue Mysql2::Error => e
-         @@log.error e.error_number
-         @@log.error e.sql_state
-
-     ensure
-         con.close if con
-    end
-  end
