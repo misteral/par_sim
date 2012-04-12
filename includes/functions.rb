@@ -26,9 +26,16 @@
 
 
   def multy_get_from_hash(urls)
+    urls.each_key do |key|
+      file_name = ROOT_PATH+"/dw-sima/"+key+".html"
+      if File.exists?(file_name) and !File.zero?(file_name)
+        urls.delete(key)
+      end
+    end
+    if !urls.empty?
     m = Curl::Multi.new
     m.pipeline = true
-    responses = {}
+    #responses = {}
     urls.each_pair do |key, value|
       responses[value] = ""
       c = Curl::Easy.new(value) do|curl|
@@ -47,5 +54,7 @@
     # end
 
     true
-
+    else
+      false #файлы все существуют ничего качать не нужно
+    end
   end
