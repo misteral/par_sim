@@ -5,7 +5,19 @@
       text = open(file_name) { |f| f.read }
     else
       fr = File.new(file_name, "w+")
-      text = open(url['url'], :proxy => proxy).read
+      begin
+      content = open(url[:url], :proxy => proxy)
+      #the_status = content.status[0]
+      rescue OpenURI::HTTPError => the_error
+      # some clean up work goes here and then..
+      the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
+      # the_error.message is the numeric code and text in a string
+      log.debug "Whoops got a bad status code #{the_error.message} Catalog download fail"
+      abort("Catalog download fail")
+      end
+      #do_something_with_status(the_status)
+
+      text = content.read
       File.open(file_name, 'w') {|f| f.write(text) }
     end
 
