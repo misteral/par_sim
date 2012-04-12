@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require "rubygems"
 require 'open-uri'
 require 'nokogiri'
@@ -31,6 +33,9 @@ txt = nil
 doc = nil
 start = nil
 #качаем то, что получили
+
+  #подрежем массив для скорости
+  pr.keep_if{|key,value| key == 'Цветы, флористика, декор' or key == "Пасха"}
 multy_get_from_hash(pr)
 
 #занесем в базу верхний уровень

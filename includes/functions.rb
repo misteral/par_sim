@@ -29,17 +29,24 @@
     m = Curl::Multi.new
     responses = {}
     urls.each_pair do |key, value|
+      responses[value] = ""
       c = Curl::Easy.new(value) do|curl|
         curl.follow_location = true
-        curl.on_body{
-              |d| f = File.new(key+'.html', 'w') {|f| f.write d}
+        curl.pipeline = true
+        curl.body_str{
+              |d| f = File.new(ROOT_PATH+'/dw-sima/'+key+'.html', 'w') {|f| f.write(d)}
             }
+        curl.on_body{|data| responses[value] << data; data.size }
       end
       m.add(c)
     end
     m.perform do
       puts "idling... can do some work here"
     end
+
+    urls.each do|url|
+       puts responses[url]
+     end
 
     true
 
