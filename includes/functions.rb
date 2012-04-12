@@ -11,7 +11,11 @@
     else
       fr = File.new(file_name, "w+")
       begin
-      content = open(url[:url], :proxy => proxy)
+      if proxy.empty?
+        content = open(url[:url])
+        else
+        content = open(url[:url], :proxy => proxy)
+      end
       #the_status = content.status[0]
       rescue OpenURI::HTTPError => the_error
       # some clean up work goes here and then..
@@ -42,7 +46,7 @@
     m.pipeline = true
     #responses = {}
     urls.each_pair do |key, value|
-      responses[value] = ""
+#      responses[value] = ""
       c = Curl::Easy.new(value) do|curl|
         curl.follow_location = true
         curl.on_body {|d| File.open(ROOT_PATH+'/dw-sima/'+path+key+'.html', 'a') {|f| f.write d} }
