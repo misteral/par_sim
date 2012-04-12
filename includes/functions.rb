@@ -1,5 +1,9 @@
 # encoding: utf-8
-  def open_or_download(url,proxy,path = "")
+
+  #url - хеш значений :name - имя :url - откуда качать
+  # proxy - прокси
+  # path - добавочный path/для уровней
+  def open_or_download(url,proxy = "",path = "")
 
     file_name = ROOT_PATH+"/dw-sima/"+path+url[:name]+".html"
     if File.exists?(file_name) and !File.zero?(file_name)
@@ -26,9 +30,9 @@
   end
 
 
-  def multy_get_from_hash(urls)
+  def multy_get_from_hash(urls,path = "")
     urls.each_key do |key|
-      file_name = ROOT_PATH+"/dw-sima/"+key+".html"
+      file_name = ROOT_PATH+"/dw-sima/"+path+key+".html"
       if File.exists?(file_name) and !File.zero?(file_name)
         urls.delete(key)
       end
@@ -41,10 +45,8 @@
       responses[value] = ""
       c = Curl::Easy.new(value) do|curl|
         curl.follow_location = true
-        #curl.on_body{|d| f = File.new(ROOT_PATH+'/dw-sima/'+key+'.html', 'w') {|f| f.write(d)}}
-        curl.on_body {|d| File.open(ROOT_PATH+'/dw-sima/'+key+'.html', 'a') {|f| f.write d} }
-        #curl.body_str{|data| responses[value] << data; data.size }
-        #curl.on_body{|data| responses[key] << data;data.size }
+        curl.on_body {|d| File.open(ROOT_PATH+'/dw-sima/'+path+key+'.html', 'a') {|f| f.write d} }
+#TODO: Надо сделать смену реферала и агента
       end
       m.add(c)
     end

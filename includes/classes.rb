@@ -47,6 +47,7 @@ class MyMySQL
                       '#{options[:product_desc]}'
     );"
       @@con.query q
+#:TODO Сделать exeptions на запросы а то падает в хлам
     #rescue @@con::Error => e
     #  $log.error e.error_number
     #  $og.error e.sql_state

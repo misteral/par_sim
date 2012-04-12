@@ -52,8 +52,8 @@ pr.each_pair do |key,value|
   mmy.insert_al({:product_name =>key, :product_url => value})
 
 #парсим внутренности категорий (следующий уровень)
-  content = open_or_download
-
+  cont = open_or_download({:url => value, :name => key}, PROXY )
+  puts cont
 end #проход по главным категориям
 
 
