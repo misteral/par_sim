@@ -1,4 +1,4 @@
-
+# encoding: utf-8
   def open_or_download(url,proxy)
     file_name = ROOT_PATH+"/dw-sima/"+url[:name]+".html"
     if File.exists?(file_name) and !File.zero?(file_name)
@@ -27,26 +27,24 @@
 
   def multy_get_from_hash(urls)
     m = Curl::Multi.new
+    m.pipeline = true
     responses = {}
     urls.each_pair do |key, value|
       responses[value] = ""
       c = Curl::Easy.new(value) do|curl|
         curl.follow_location = true
-        curl.pipeline = true
-        curl.body_str{
-              |d| f = File.new(ROOT_PATH+'/dw-sima/'+key+'.html', 'w') {|f| f.write(d)}
-            }
-        curl.on_body{|data| responses[value] << data; data.size }
+        #curl.on_body{|d| f = File.new(ROOT_PATH+'/dw-sima/'+key+'.html', 'w') {|f| f.write(d)}}
+        curl.on_body {|d| File.open(ROOT_PATH+'/dw-sima/'+key+'.html', 'a') {|f| f.write d} }
+        #curl.body_str{|data| responses[value] << data; data.size }
+        #curl.on_body{|data| responses[key] << data;data.size }
       end
       m.add(c)
     end
-    m.perform do
-      puts "idling... can do some work here"
-    end
+    m.perform
 
-    urls.each do|url|
-       puts responses[url]
-     end
+    #urls.each do|url|
+    #   puts responses[url]
+    # end
 
     true
 
