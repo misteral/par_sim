@@ -47,11 +47,12 @@ class MyMySQL
                       '#{options[:product_desc]}'
     );"
     @@con.query q
-    q2 = "select product_id from jos_al_import order by desc limit 1"
-    @@con.query q2
-    @@con.result.each {|result| id = result}
+    q2 = "select product_id from jos_al_import order by product_id DESC limit 1;"
+    pr_id = ""
+    result = @@con.query q2
+    result.each {|res| pr_id = res['product_id']}
 
-    id
+    pr_id
 #:TODO Сделать exeptions на запросы а то падает в хлам
     #rescue @@con::Error => e
     #  $log.error e.error_number
