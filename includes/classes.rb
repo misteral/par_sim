@@ -17,6 +17,7 @@ class MyMySQL
     options[:product_price] ||= 0
     options[:product_sku] ||= ""
     options[:product_desc] ||= ""
+    options[:product_margin] ||= 1.8
 
     #begin
 
@@ -31,7 +32,8 @@ class MyMySQL
               product_min,
               product_price,
               product_sku,
-              product_desc
+              product_desc,
+              product_margin
               )
 
               values ('#{options[:product_name]}',
@@ -44,7 +46,8 @@ class MyMySQL
                       '#{options[:product_min]}',
                       #{options[:product_price]},
                       '#{options[:product_sku]}',
-                      '#{options[:product_desc]}'
+                      '#{options[:product_desc]}',
+                      #{options[:product_margin]}
     );"
     @@con.query q
     q2 = "select product_id from jos_al_import order by product_id DESC limit 1;"
