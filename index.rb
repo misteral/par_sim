@@ -71,44 +71,69 @@ pr2.each do |h|
   returned_id = mmy.insert_al(h)  #заносим а базу второй уровень
   # парсим третий уровень
   sqip = false
-  pis = {}
   doc = Nokogiri::HTML(open_or_download({ :url => h[:product_url], :name => h[:product_name] }, "2/"))
   doc.xpath("//div[@class='item-list-wrapper']/table[@class='item-list-table']/tbody/tr").each do |el3|
-    pis[:product_name]= el3.xpath("td[@class='item-list-name']/a").text
+ #   begin
+    pis = {}
+    pre_product_name= el3.xpath("td[@class='item-list-name']/a").text
     pis[:product_url] = el3.xpath("td[@class='item-list-name']/a")[0]['href']
     pis[:product_status] = 4
     pis[:product_parent_id] = returned_id
     pis[:product_is_group] = 0
-    pis[:product_ed] = el3.xpath("td[@class='item-list-qty']").text.strip
-    pis[:product_min] = el3.xpath("td[@class='item-list-qty']/span").text.strip
-    pis[:product_price] = el3.xpath("td[@class='item-list-price']/div").text.strip.to_i
-    pis[:product_sku] =  el3["itemid"]
-    pre_product_desc_razm = "Размер: "+(el3.xpath("td[@class='item-list-name']").text.strip).match(/Размеры:(.+?)Материал:/)[1]
-    pre_product_desc_mater = "Материал: "+(el3.xpath("td[@class='item-list-name']").text.strip).match(/Материал:(.+)/)[1]
-    pre_product_desc_vnabore = (el3.xpath("td[@class='item-list-pack']").text).strip.match(/\((.+)\)/)[1].strip
+    pre_product_ed= el3.xpath("td[@class='item-list-qty']").text.strip
+    pre_price_min = el3.xpath("td[@class='item-list-qty']").text.strip
+    pis[:product_price] = el3.xpath("td[@class='item-list-price']/div").text.strip.to_f
+    pis[:product_sku] =  el3["itemid"].strip
+    pre_product_desc = (el3.xpath("td[@class='item-list-name']").text.strip)
     pis[:product_ost] = (el3.xpath("td[@class='item-list-balance']").text).strip
+    pre_product_desc_vnabore = (el3.xpath("td[@class='item-list-pack']").text).strip
 
-    dop1 = (!pre_product_desc_mater.empty?) ? pre_product_desc_mater+". ": ""
-    dop2 = (!pre_product_desc_razm.empty?) ? pre_product_desc_razm+". ": ""
-    dop3 = (!pre_product_desc_vnabore.empty?) ? pre_product_desc_vnabore+". ": ""
-    dop3[0] = "В"
-    pis[:product_desc] = dop1 + dop2+ dop3
-
-
-    #---не берем если с маленьким остатком
-    if !pis[:product_ost].is_a?(String)
-      begin
-      if product_ost.to_i < 50
-        skip=true
-      end
-      rescue
-        skip=true
-      end
+    pis[:product_min] = pre_price_min.gsub(/выбрать цвет/,"")
+    pis[:product_name]  = pre_product_name.gsub(/#{pis[:product_sku]}/,"").strip
+    if pre_product_ed.include?("набор")
+    pis[:product_ed] = "набор"
     else
+      if pre_product_ed.include?("упак")
+        pis[:product_ed] = "упак"
+      else pis[:product_ed] = "шт"
+      end
+    end
+
+    dop1 = pre_product_desc[/Материал:(.+)/,1]
+    dop2 = pre_product_desc[/Размеры:(.+?)Материал:/,1]
+    dop3 = pre_product_desc_vnabore[/\((.+)\)/,1]
+
+    dop1 = (dop1) ? dop1.strip.downcase : ""
+    dop2 = (dop2) ? dop2.strip.downcase : ""
+=begin
+    if dop3
+      dop3 = dop3.strip
+      if !dop2 and dop3
+        dop1= dop1+", "
+      end
+      if dop1
+        dop2 = ", "+dop2
+      end
+      if dop1 or dop2
+        dop3 = ", "+dop3+"."
+        else dop3 = dop3+"."
+      end
+      pis[:product_desc] = dop1 + dop2+ dop3
+    else
+      pis[:product_desc] = dop1 + dop2+"."
+    end
+=end
+
+#:TODO Убарть . , если родители пустые
+
+      if pis[:product_ost].to_i < 50 and pis[:product_ost].to_i != 0
+          skip=true
+      end
+
       if pis[:product_ost] =='от 0 до 10' or pis[:product_ost] =='от 10 до 50'	or pis[:product_ost] =='от 50 до 100' or pis[:product_ost]=="Мало"
         skip=true
       end
-    end
+
     # --- наценка на товар
     pis[:product_margin] = 1.3 if pis[:product_price] > 2000
     pis[:product_margin] = 1.3 if pis[:product_price] <=2000
@@ -121,12 +146,19 @@ pr2.each do |h|
     pis[:product_margin] = 2   if pis[:product_price] <=50
     pis[:product_margin] = 2.3 if pis[:product_price] <=10
 
-    puts "d"
-
+     #заносим в базу товар
+    if !skip
+      mmy.insert_al(pis)
+    end
+=begin
+    rescue
+      puts "errr"
+    end
+=end
   end #проход по товарам
 
 
 end #проход по подчиненным категориям
 
-  #заносим в базу товар
+
 
