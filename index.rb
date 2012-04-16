@@ -10,7 +10,7 @@ require 'mysql2'
 Dir[File.dirname(__FILE__)+"/includes/*.rb"].each {|file| require file }
 
 #--------CONSTANTS---------------
-
+ROOT_PATH = File.dirname(__FILE__)
 #--------/CONSTANTS---------------
 
 #--------FIRST INIT------------------
