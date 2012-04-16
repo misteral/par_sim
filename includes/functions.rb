@@ -73,6 +73,8 @@
     if !urls.empty?
     m = Curl::Multi.new
     m.pipeline = true
+    #pbar = ProgressBar.new("Download urls", urls.size)
+
     #m.max_connects = 100
     #responses = {}
     urls.each_pair do |key, value|
@@ -83,6 +85,8 @@
         curl.headers["Referer"]= "http://www.yandex.ru"
         curl.useragent = all_useragents.sample
         curl.on_body {|d| File.open(path_for+value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")+'.html', 'a') {|f| f.write d} }
+        curl.on_failure {|response, err| $log.error "Erroor download #{key}. We have failure.  The response code is #{response.response_code}. Error is: #{err.inspect}"}
+        #curl.on_progress {|dl_total, dl_now, ul_total, ul_now| puts "dl_total-#{dl_total} --- dl_now-#{dl_now}";sleep 3; puts}
       end
       m.add(c)
     end
