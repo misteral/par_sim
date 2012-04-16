@@ -10,13 +10,7 @@ require 'mysql2'
 Dir[File.dirname(__FILE__)+"/includes/*.rb"].each {|file| require file }
 
 #--------CONSTANTS---------------
-ROOT_PATH = File.dirname(__FILE__)
-url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
-PROXY = 'http://10.44.33.209:8080'
-M_HOST = "localhost"
-M_USER = "root"
-M_PASS = "fduecn"
-M_DB = "sundmart"
+
 #--------/CONSTANTS---------------
 
 #--------FIRST INIT------------------
