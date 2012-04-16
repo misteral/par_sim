@@ -105,34 +105,26 @@ pr2.each do |h|
 
     dop1 = (dop1) ? dop1.strip.downcase : ""
     dop2 = (dop2) ? dop2.strip.downcase : ""
-=begin
-    if dop3
-      dop3 = dop3.strip
-      if !dop2 and dop3
-        dop1= dop1+", "
-      end
-      if dop1
-        dop2 = ", "+dop2
-      end
-      if dop1 or dop2
-        dop3 = ", "+dop3+"."
-        else dop3 = dop3+"."
-      end
-      pis[:product_desc] = dop1 + dop2+ dop3
+    dop3 = (dop3) ? dop3.strip.downcase : ""
+
+    if !dop1.empty? and !dop2.empty?
+      dop2 = ", "+dop2
+    end
+    if !dop3.empty? and !dop2.empty?
+      dop2 = dop2+", "
+    end
+    if !dop3.empty?
+      pis[:product_desc] = dop1+dop2+dop3 +"."
     else
       pis[:product_desc] = dop1 + dop2+"."
     end
-=end
 
-#:TODO Убарть . , если родители пустые
-
-      if pis[:product_ost].to_i < 50 and pis[:product_ost].to_i != 0
-          skip=true
-      end
-
-      if pis[:product_ost] =='от 0 до 10' or pis[:product_ost] =='от 10 до 50'	or pis[:product_ost] =='от 50 до 100' or pis[:product_ost]=="Мало"
+    if pis[:product_ost].to_i < 50 and pis[:product_ost].to_i != 0
         skip=true
-      end
+    end
+    if pis[:product_ost] =='от 0 до 10' or pis[:product_ost] =='от 10 до 50'	or pis[:product_ost] =='от 50 до 100' or pis[:product_ost]=="Мало"
+      skip=true
+    end
 
     # --- наценка на товар
     pis[:product_margin] = 1.3 if pis[:product_price] > 2000
