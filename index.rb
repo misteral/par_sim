@@ -22,6 +22,8 @@ M_DB = "sundmart"
 #--------FIRST INIT------------------
 $log = Logger.new(ROOT_PATH+"/log/log.txt", 'daily')
 mmy = MyMySQL.new(M_HOST, M_USER, M_PASS, M_DB)
+pr_count = 0
+pr_skip =0
 #log.debug "Log file created"
 #--------/FIRST INIT------------------
 
@@ -41,7 +43,7 @@ doc = nil
 start = nil
 #---качаем то, что получили
   #---подрежем массив для скорости
-  pr.keep_if{|key,value| key == 'Цветы, флористика, декор' or key == "Пасха"}
+  #pr.keep_if{|key,value| key == 'Посуда и кухонные принадлежности'}
 multy_get_from_hash(pr.clone,"1/")
 
 pr2=[] # массив со вторым уровнем
@@ -53,7 +55,7 @@ pr.each_pair do |key,value|
   doc = Nokogiri::HTML(open_or_download({ :url => value, :name => key }, "1/"))
   doc.xpath('//div[@class="item-list-categories thumbs120"]/ins/div/span/a').each do |el2|
     #pr2[el2["title"]] = el2["href"]
-    pr2 << {:product_name => el2["title"], :product_url => el2["href"], :parent_id => returned_id}
+    pr2 << {:product_name => el2["title"], :product_url => el2["href"]+"?limit=500", :product_parent_id => returned_id}
   end
 end #проход по главным категориям
 cont = nil
@@ -62,9 +64,10 @@ doc = nil
 #  качаем третий уровень с товаром
 #----выдергиваем хеш name=>url
 pr2_hash={}
-pr2.each {|h| pr2_hash[h[:product_name]]=h[:product_url]+"?limit=500"}
+pr2.each {|h| pr2_hash[h[:product_name]]=h[:product_url]}
 multy_get_from_hash(pr2_hash,"2/") #качаем третий уровень
 #--заносим в базу второй уровень
+$log.debug ("Category 2 lvl for parsing "+pr2.size.to_s)
 pr2_hash = nil
 pr3=[]
 pr2.each do |h|
@@ -77,7 +80,7 @@ pr2.each do |h|
     pis = {}
     pre_product_name= el3.xpath("td[@class='item-list-name']/a").text
     pis[:product_url] = el3.xpath("td[@class='item-list-name']/a")[0]['href']
-    pis[:product_status] = 4
+    pis[:product_status] = 1
     pis[:product_parent_id] = returned_id
     pis[:product_is_group] = 0
     pre_product_ed= el3.xpath("td[@class='item-list-qty']").text.strip
@@ -90,6 +93,10 @@ pr2.each do |h|
 
     pis[:product_min] = pre_price_min.gsub(/выбрать цвет/,"")
     pis[:product_name]  = pre_product_name.gsub(/#{pis[:product_sku]}/,"").strip
+
+
+    pis[:product_ost] = pis[:product_ost].gsub(/Новинка/,"").strip
+
     if pre_product_ed.include?("набор")
     pis[:product_ed] = "набор"
     else
@@ -116,7 +123,11 @@ pr2.each do |h|
     if !dop3.empty?
       pis[:product_desc] = dop1+dop2+dop3 +"."
     else
+      if !dop2.empty? or !dop1.empty?
       pis[:product_desc] = dop1 + dop2+"."
+      else
+        pis[:product_desc] = ""
+      end
     end
 
     if pis[:product_ost].to_i < 50 and pis[:product_ost].to_i != 0
@@ -137,9 +148,10 @@ pr2.each do |h|
     pis[:product_margin] = 1.8 if pis[:product_price] <=100
     pis[:product_margin] = 2   if pis[:product_price] <=50
     pis[:product_margin] = 2.3 if pis[:product_price] <=10
-
+    pr_count = pr_count+1
      #заносим в базу товар
     if !skip
+      pr_skip = pr_skip+1
       mmy.insert_al(pis)
     end
 =begin
@@ -152,5 +164,5 @@ pr2.each do |h|
 
 end #проход по подчиненным категориям
 
-
+$log.debug ("Goods all "+pr_count.to_s+", goods skiped " + (pr_count-pr_skip).to_s)
 

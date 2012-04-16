@@ -6,7 +6,8 @@
   def open_or_download(url,path="",proxy="")
     path_for = ROOT_PATH+"/dw-sima/"+path
     Dir.mkdir(path_for) unless File.exists?(path_for)
-    file_name = path_for+url[:name]+".html"
+    url_name = url[:url][/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")
+    file_name = path_for+url_name+".html"
     if File.exists?(file_name) and !File.zero?(file_name)
       text = open(file_name) { |f| f.read }
     else
@@ -39,22 +40,49 @@
     path_for = ROOT_PATH+"/dw-sima/"+path
     Dir.mkdir(path_for) unless File.exists?(path_for) #создание директории когда ее нет
 
-    urls.each_key do |key|
-      file_name = path_for+key+".html"
+    urls.each do |key, value|
+      url_name = value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")
+      file_name = path_for+url_name+".html"
+      #file_name = path_for+key+".html"
       if File.exists?(file_name) and !File.zero?(file_name)
         urls.delete(key)
       end
     end
+    all_useragents = [
+   	"Opera/9.23 (Windows NT 5.1; U; ru)",
+   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.4;MEGAUPLOAD 1.0",
+   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; Alexa Toolbar; MEGAUPLOAD 2.0; rv:1.8.1.7) Gecko/20070914 Firefox/2.0.0.7;MEGAUPLOAD 1.0",
+   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+   	"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; Maxthon; SLCC1; .NET CLR 2.0.50727; .NET CLR 3.0.04506; Media Center PC 5.0; InfoPath.1)",
+   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+   	"Opera/9.10 (Windows NT 5.1; U; ru)",
+   	"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1; aggregator:Tailrank; http://tailrank.com/robot) Gecko/20021130",
+   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
+   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
+   	"Opera/9.22 (Windows NT 6.0; U; ru)",
+   	"Opera/9.22 (Windows NT 6.0; U; ru)",
+   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
+   	"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",
+   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; MRSPUTNIK 1, 8, 0, 17 HW; MRA 4.10 (build 01952); .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)",
+   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9"
+   	];
     if !urls.empty?
     m = Curl::Multi.new
     m.pipeline = true
+    #m.max_connects = 100
     #responses = {}
     urls.each_pair do |key, value|
 #      responses[value] = ""
       c = Curl::Easy.new(value) do|curl|
         curl.follow_location = true
-        curl.on_body {|d| File.open(path_for+key+'.html', 'a') {|f| f.write d} }
-#TODO: Надо сделать смену реферала и агента
+        curl.connect_timeout = 100
+        curl.headers["Referer"]= "http://www.yandex.ru"
+        curl.useragent = all_useragents.sample
+        curl.on_body {|d| File.open(path_for+value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")+'.html', 'a') {|f| f.write d} }
       end
       m.add(c)
     end

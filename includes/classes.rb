@@ -19,7 +19,7 @@ class MyMySQL
     options[:product_desc] ||= ""
     options[:product_margin] ||= 1.8
 
-    #begin
+    options[:product_name] = @@con.escape(options[:product_name])
 
     q = "insert into jos_al_import (
               product_name,
@@ -51,6 +51,7 @@ class MyMySQL
                       #{options[:product_margin]},
                       '#{options[:product_ost]}'
     );"
+    begin
     @@con.query q
     q2 = "select product_id from jos_al_import order by product_id DESC limit 1;"
     pr_id = ""
@@ -59,10 +60,13 @@ class MyMySQL
 
     pr_id
 #:TODO Сделать exeptions на запросы а то падает в хлам
-    #rescue @@con::Error => e
+    rescue Mysql2::Error => e
+    puts  e.error_number
+    puts  e.sql_state
+    puts "e"
     #  $log.error e.error_number
     #  $og.error e.sql_state
-    #end
+    end
   end
 end #end class MySQL
 
