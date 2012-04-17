@@ -90,6 +90,7 @@ pr2.each do |h|
     pre_price_min = pre_price_min.gsub(/выбрать цвет/,"")
     if pre_price_min.include? ("по")
       pis[:product_full_image] = pre_price_min_d   #ход конем  product_full_image - кратность
+      pis[:product_min] = pre_price_min_d
     end
     if pre_price_min.include? ("минимум")
       pis[:product_min] = pre_price_min_d
