@@ -3,6 +3,8 @@ class MyMySQL
   def initialize (host,user,pass, db)
     begin
       @@con = Mysql2::Client.new(:host=>host,:username=>user, :password => pass, :database=> db)
+      q= "truncate jos_al_import"
+      @@con.query q
     rescue Mysql2::Error => e
       $log.error e.error_number
       $log.error e.sql_state
