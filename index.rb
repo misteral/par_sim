@@ -123,6 +123,9 @@ pr2.each do |h|
       dop2 = dop2+", "
     end
     if !dop3.empty?
+      if !dop1.empty?
+        dop1= dop1+", "
+      end
       pis[:product_desc] = dop1+dop2+dop3
     else
       if !dop2.empty? or !dop1.empty?
