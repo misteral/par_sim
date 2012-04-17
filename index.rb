@@ -26,7 +26,7 @@ pr_skip =0
 $log.debug "Read catalog"
 txt = open_or_download(url_catalog)
 doc = Nokogiri::HTML(txt)
-start = doc.xpath('//div[@class="text-catalog"]')[0]
+start = doc.xpath('//div[@class="text-catalog"]')
 pr={}
 start.css('span div h3 a').each do |el1|
   pr[el1.text]= el1['href']
@@ -123,10 +123,10 @@ pr2.each do |h|
       dop2 = dop2+", "
     end
     if !dop3.empty?
-      pis[:product_desc] = dop1+dop2+dop3 +"."
+      pis[:product_desc] = dop1+dop2+dop3
     else
       if !dop2.empty? or !dop1.empty?
-      pis[:product_desc] = dop1 + dop2+"."
+      pis[:product_desc] = dop1 + dop2
       else
         pis[:product_desc] = ""
       end
