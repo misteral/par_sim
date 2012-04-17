@@ -36,7 +36,8 @@ class MyMySQL
               product_sku,
               product_desc,
               product_margin,
-              product_ost
+              product_ost,
+              product_full_image
               )
 
               values ('#{options[:product_name]}',
@@ -51,7 +52,8 @@ class MyMySQL
                       '#{options[:product_sku]}',
                       '#{options[:product_desc]}',
                       #{options[:product_margin]},
-                      '#{options[:product_ost]}'
+                      '#{options[:product_ost]}',
+                      '#{options[:product_full_image]}'
     );"
     begin
     @@con.query q

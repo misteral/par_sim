@@ -38,7 +38,7 @@ doc = nil
 start = nil
 #---качаем то, что получили
   #---подрежем массив для скорости
-  #pr.keep_if{|key,value| key == 'Посуда и кухонные принадлежности'}
+  pr.keep_if{|key,value| key == 'Посуда и кухонные принадлежности'}
 multy_get_from_hash(pr.clone,"1/")
 
 pr2=[] # массив со вторым уровнем
@@ -80,13 +80,20 @@ pr2.each do |h|
     pis[:product_is_group] = 0
     pre_product_ed= el3.xpath("td[@class='item-list-qty']").text.strip
     pre_price_min = el3.xpath("td[@class='item-list-qty']").text.strip
+    pre_price_min_d = el3.xpath("td[@class='item-list-qty']/span").text.strip
     pis[:product_price] = el3.xpath("td[@class='item-list-price']/div").text.strip.to_f
     pis[:product_sku] =  el3["itemid"].strip
     pre_product_desc = (el3.xpath("td[@class='item-list-name']").text.strip)
     pis[:product_ost] = (el3.xpath("td[@class='item-list-balance']").text).strip
     pre_product_desc_vnabore = (el3.xpath("td[@class='item-list-pack']").text).strip
 
-    pis[:product_min] = pre_price_min.gsub(/выбрать цвет/,"")
+    pre_price_min = pre_price_min.gsub(/выбрать цвет/,"")
+    if pre_price_min.include? ("по")
+      pis[:product_full_image] = pre_price_min_d   #ход конем  product_full_image - кратность
+    end
+    if pre_price_min.include? ("минимум")
+      pis[:product_min] = pre_price_min_d
+    end
     pis[:product_name]  = pre_product_name.gsub(/#{pis[:product_sku]}/,"").strip
 
 
