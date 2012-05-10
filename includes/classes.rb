@@ -20,7 +20,6 @@ class MyMySQL
     options[:product_sku] ||= ""
     options[:product_desc] ||= ""
     options[:product_margin] ||= 1.8
-
     options[:product_name] = @@con.escape(options[:product_name])
 
     q = "insert into jos_al_import (
@@ -37,7 +36,8 @@ class MyMySQL
               product_desc,
               product_margin,
               product_ost,
-              product_full_image
+              product_full_image,
+              tip_tov
               )
 
               values ('#{options[:product_name]}',
@@ -53,7 +53,8 @@ class MyMySQL
                       '#{options[:product_desc]}',
                       #{options[:product_margin]},
                       '#{options[:product_ost]}',
-                      '#{options[:product_full_image]}'
+                      '#{options[:product_full_image]}',
+                      #{options[:tip_tov]}
     );"
     begin
     @@con.query q
@@ -65,9 +66,9 @@ class MyMySQL
     pr_id
 #:TODO Сделать exeptions на запросы а то падает в хлам
     rescue Mysql2::Error => e
-    puts  e.error_number
+    puts  "Mysql error number - "+e.error_number
     puts  e.sql_state
-    puts "e"
+    #puts "e"
     #  $log.error e.error_number
     #  $og.error e.sql_state
     end

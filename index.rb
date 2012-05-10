@@ -18,7 +18,8 @@ url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
 $log = Logger.new(ROOT_PATH+"/log/log.txt", 'daily')
 mmy = MyMySQL.new(M_HOST, M_USER, M_PASS, M_DB)
 pr_count = 0
-pr_skip =0
+pr_skip = 0
+tip_tov = 0
 #log.debug "Log file created"
 #--------/FIRST INIT------------------
 
@@ -69,10 +70,15 @@ pr2.each do |h|
   returned_id = mmy.insert_al(h)  #заносим а базу второй уровень
   # парсим третий уровень
   sqip = false
+  if h[:product_url].include? ('igrushki')   #определим тип товара игрушка или сувенирка
+    tip_tov = 1
+    else tip_tov = 0
+  end
   doc = Nokogiri::HTML(open_or_download({ :url => h[:product_url], :name => h[:product_name] }, "2/"))
   doc.xpath("//div[@class='item-list-wrapper']/table[@class='item-list-table']/tbody/tr").each do |el3|
  #   begin
     pis = {}
+    pis[:tip_tov] = tip_tov
     pre_product_name= el3.xpath("td[@class='item-list-name']/a").text
     pis[:product_url] = el3.xpath("td[@class='item-list-name']/a")[0]['href']
     pis[:product_status] = 1
