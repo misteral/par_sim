@@ -45,7 +45,11 @@ multy_get_from_hash(pr.clone,"1/")
 pr2=[] # массив со вторым уровнем
 pr.each_pair do |key,value|
 #---занесем в базу верхний уровень
-  returned_id =  mmy.insert_al({:product_name =>key, :product_url => value})
+  if value.include? ('igrushki')   #определим тип товара игрушка или сувенирка
+    tip_tov = 1
+  else tip_tov = 2
+  end
+  returned_id =  mmy.insert_al({:product_name =>key, :product_url => value, :tip_tov=>tip_tov})
 #---парсим внутренности категорий (2 уровень)
   doc_hash = Hash.new()
   doc = Nokogiri::HTML(open_or_download({ :url => value, :name => key }, "1/"))
@@ -67,13 +71,14 @@ $log.debug ("Category 2 lvl for parsing "+pr2.size.to_s)
 pr2_hash = nil
 pr3=[]
 pr2.each do |h|
-  returned_id = mmy.insert_al(h)  #заносим а базу второй уровень
-  # парсим третий уровень
-  sqip = false
   if h[:product_url].include? ('igrushki')   #определим тип товара игрушка или сувенирка
     tip_tov = 1
-    else tip_tov = 0
+  else tip_tov = 2
   end
+  h[:tip_tov] = tip_tov
+  returned_id = mmy.insert_al(h)  #заносим а базу второй уровень
+                                  # парсим третий уровень
+  sqip = false
   doc = Nokogiri::HTML(open_or_download({ :url => h[:product_url], :name => h[:product_name] }, "2/"))
   doc.xpath("//div[@class='item-list-wrapper']/table[@class='item-list-table']/tbody/tr").each do |el3|
  #   begin

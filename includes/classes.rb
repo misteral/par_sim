@@ -20,6 +20,7 @@ class MyMySQL
     options[:product_sku] ||= ""
     options[:product_desc] ||= ""
     options[:product_margin] ||= 1.8
+    options[:tip_tov] ||= 0
     options[:product_name] = @@con.escape(options[:product_name])
 
     q = "insert into jos_al_import (
@@ -66,9 +67,9 @@ class MyMySQL
     pr_id
 #:TODO Сделать exeptions на запросы а то падает в хлам
     rescue Mysql2::Error => e
-    puts  "Mysql error number - "+e.error_number
+    puts  "Mysql error number - "+e.error_number.to_s
     puts  e.sql_state
-    #puts "e"
+    puts  e
     #  $log.error e.error_number
     #  $og.error e.sql_state
     end
