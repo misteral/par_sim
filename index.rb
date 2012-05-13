@@ -39,7 +39,7 @@ doc = nil
 start = nil
 #---качаем то, что получили
   #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---подрежем массив для скорости
-  #pr.keep_if{|key,value| key == 'Посуда и кухонные принадлежности'}
+  pr.keep_if{|key,value| key == 'Музыкальные игрушки'}
 multy_get_from_hash(pr.clone,"1/")
 
 pr2=[] # массив со вторым уровнем
@@ -183,3 +183,4 @@ end #проход по подчиненным категориям
 
 $log.debug ("Goods all "+pr_count.to_s+", goods skiped " + (pr_count-pr_skip).to_s)
 
+#system('mysql -uroot -p -b -e "SELECT * FROM jos_al_import" > my_data.csv --database=sundmart --default-character-set=UTF8')
