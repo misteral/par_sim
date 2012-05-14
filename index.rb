@@ -6,6 +6,7 @@ require 'nokogiri'
 require 'curb'
 require 'logger'
 require 'mysql2'
+require 'csv'
 
 Dir[File.dirname(__FILE__)+"/includes/*.rb"].each {|file| require file }
 
@@ -39,7 +40,7 @@ doc = nil
 start = nil
 #---качаем то, что получили
   #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---подрежем массив для скорости
-  pr.keep_if{|key,value| key == 'Музыкальные игрушки'}
+  #pr.keep_if{|key,value| key == 'Музыкальные игрушки'}
 multy_get_from_hash(pr.clone,"1/")
 
 pr2=[] # массив со вторым уровнем
