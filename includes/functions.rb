@@ -23,7 +23,7 @@
       # some clean up work goes here and then..
       the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
       # the_error.message is the numeric code and text in a string
-      @log.debug "Whoops got a bad status code #{the_error.message} Catalog download fail"
+      @log.error "Whoops got a bad status code #{the_error.message} Catalog download fail"
       abort("Catalog download fail")
       end
       #do_something_with_status(the_status)
