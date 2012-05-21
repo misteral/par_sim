@@ -56,7 +56,8 @@ pr.each_pair do |key,value|
   doc = Nokogiri::HTML(open_or_download({ :url => value, :name => key }, "1/"))
   doc.xpath('//div[@class="item-list-categories thumbs120"]/ins/div/span/a').each do |el2|
     #pr2[el2["title"]] = el2["href"]
-    pr2 << {:product_name => el2["title"], :product_url => el2["href"]+"?limit=500", :product_parent_id => returned_id}
+    #pr2 << {:product_name => el2["title"], :product_url => el2["href"]+"?limit=500", :product_parent_id => returned_id}
+    pr2 << {:product_name => el2["title"], :product_url => el2["href"], :product_parent_id => returned_id}
   end
 end #проход по главным категориям
 cont = nil
@@ -78,9 +79,15 @@ pr2.each do |h|
   end
   h[:tip_tov] = tip_tov
   returned_id = mmy.insert_al(h)  #заносим а базу второй уровень
-                                  # парсим третий уровень
-  sqip = false
+end # проход по категориям уровень 2
+
+# парсим четвертый уровень
+
+
+=begin
+  # парсим товарный уровень
   doc = Nokogiri::HTML(open_or_download({ :url => h[:product_url], :name => h[:product_name] }, "2/"))
+  skip = false
   doc.xpath("//div[@class='item-list-wrapper']/table[@class='item-list-table']/tbody/tr").each do |el3|
  #   begin
     pis = {}
@@ -172,15 +179,12 @@ pr2.each do |h|
       pr_skip = pr_skip+1
       mmy.insert_al(pis)
     end
-=begin
-    rescue
-      puts "errr"
-    end
+
+  #end #проход по товарам
 =end
-  end #проход по товарам
 
 
-end #проход по подчиненным категориям
+#end #проход по подчиненным категориям
 
 $log.debug ("Goods all "+pr_count.to_s+", goods skiped " + (pr_count-pr_skip).to_s)
 
