@@ -36,11 +36,12 @@
   end
 
 
-  def multy_get_from_hash(urls,path = "")
+  def multy_get_from_hash(urls,path = "",proxy="")
     path_for = ROOT_PATH+"/dw-sima/"+path
     Dir.mkdir(path_for) unless File.exists?(path_for) #создание директории когда ее нет
 
     urls.each do |key, value|
+      #puts "ds"
       url_name = value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")
       file_name = path_for+url_name+".html"
       #file_name = path_for+key+".html"
@@ -81,6 +82,7 @@
 #      responses[value] = ""
       c = Curl::Easy.new(value) do|curl|
         curl.follow_location = true
+        curl.proxy_url = proxy if !proxy.empty?
         curl.connect_timeout = 100
         curl.headers["Referer"]= "http://www.yandex.ru"
         curl.useragent = all_useragents.sample
@@ -102,4 +104,30 @@
     end
   end
 
-
+  #качает затем парсит заданный уровень,, заносит в базу их и возвращает массив со следующим уровнем
+  def parce_category(list_cat_arr,lvl)
+    pr2_hash={}
+    list_cat_arr.each {|h| pr2_hash[h[:product_name]]=h[:product_url]} #пробежимся выдернем ключ значение в список для закачки
+    multy_get_from_hash(pr2_hash.clone,lvl.to_s+"/",PROXY)  #качаем файлы
+    pr2_hash = nil
+    pr2=[] # массив со вторым уровнем
+    list_cat_arr.each do |v|
+    #---занесем в базу верхний уровень
+      if v[:product_url].include? ('igrushki')   #определим тип товара игрушка или сувенирка
+        v[:tip_tov] = 1
+      else v[:tip_tov] = 2
+      end
+      returned_id =  @mmy.insert_al(v)
+    #---парсим внутренности категорий (2 уровень)
+    #doc_hash = Hash.new()
+      doc = Nokogiri::HTML(open_or_download({ :url => v[:product_url], :name => v[:product_name] }, lvl.to_s+"/",PROXY))
+      doc.xpath('//div[@class="item-list-categories thumbs120"]/ins/div/span/a').each do |el2|
+        #pr2[el2["title"]] = el2["href"]
+        #pr2 << {:product_name => el2["title"], :product_url => el2["href"]+"?limit=500", :product_parent_id => returned_id}
+        pr2 << {:product_name => el2["title"], :product_url => el2["href"], :product_parent_id => returned_id}
+      end
+    end #проход по главным категориям
+    cont = nil
+    doc = nil
+    pr2
+  end

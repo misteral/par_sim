@@ -10,6 +10,7 @@ class MyMySQL
       $log.error e.sql_state
     end
   end
+
   def insert_al(options={})
     options[:product_status] ||= 2
     options[:product_paernt_id] ||= 0

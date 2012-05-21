@@ -17,7 +17,7 @@ url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
 
 #--------FIRST INIT------------------
 $log = Logger.new(ROOT_PATH+"/log/log.txt", 'daily')
-mmy = MyMySQL.new(M_HOST, M_USER, M_PASS, M_DB)
+@mmy = MyMySQL.new(M_HOST, M_USER, M_PASS, M_DB)
 pr_count = 0
 pr_skip = 0
 tip_tov = 0
@@ -26,22 +26,31 @@ tip_tov = 0
 
 # ---получаем первую порцию иформации с каталога Симы
 $log.debug "Read catalog"
-txt = open_or_download(url_catalog)
+txt = open_or_download(url_catalog,"",PROXY)
 doc = Nokogiri::HTML(txt)
 start = doc.xpath('//div[@class="text-catalog"]')
-pr={}
+lvl0=[]
 start.css('span div h3 a').each do |el1|
-  pr[el1.text]= el1['href']
+  lvl0 << {:product_name => el1.text, :product_url => el1["href"], :product_parent_id => 0}
+  #pr[el1.text]= el1['href']
 end
 
-$log.debug ("Readed "+pr.size.to_s+"categories.")
+$log.debug ("Readed "+lvl0.size.to_s+"categories.")
 txt = nil
 doc = nil
 start = nil
 #---качаем то, что получили
   #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---подрежем массив для скорости
   #pr.keep_if{|key,value| key == 'Товары из Индии'}
-multy_get_from_hash(pr.clone,"1/")
+
+
+lvl1 = parce_category(lvl0,1)
+lvl2 = parce_category(lvl1,2)
+
+
+
+
+
 
 pr2=[] # массив со вторым уровнем
 pr.each_pair do |key,value|
@@ -62,6 +71,11 @@ pr.each_pair do |key,value|
 end #проход по главным категориям
 cont = nil
 doc = nil
+
+
+
+
+
 
 #  качаем третий уровень с товаром
 #----выдергиваем хеш name=>url
