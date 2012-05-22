@@ -248,3 +248,11 @@
 
     arr = {:count =>pr_count, :skip => pr_skip}
   end  #parse_product
+
+  def swap_sku(sku)
+      sku = "1"+sku.to_s.reverse
+  end
+
+  def re_swap_sku(sku)
+    sku = sku[1..sku.size-1].reverse
+  end

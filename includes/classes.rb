@@ -24,6 +24,11 @@ class MyMySQL
     options[:tip_tov] ||= 0
     options[:product_name] = @@con.escape(options[:product_name])
 
+    #перевернем sku
+
+    options[:product_sku] = swap_sku(options[:product_sku]) if options[:product_sku]
+
+
     q = "insert into jos_al_import (
               product_name,
               product_url,
