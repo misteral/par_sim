@@ -154,7 +154,7 @@
       tip_tov = 1
     else tip_tov = 2
     end
-    doc = Nokogiri::HTML(open_or_download({ :url => h[:product_url]+"?limit=500", :name => h[:product_name] }, lvl.to_s+"/"))
+    doc = Nokogiri::HTML(open_or_download({ :url => h[:product_url]+"?limit=500", :name => h[:product_name] }, lvl.to_s+"/",PROXY))
     skip = false
     doc.xpath("//div[@class='item-list-wrapper']/table[@class='item-list-table']/tbody/tr").each do |el3|
       pis = {}
