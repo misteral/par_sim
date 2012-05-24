@@ -243,6 +243,7 @@
       if !skip
         pr_skip = pr_skip+1
         @mmy.insert_al(pis)
+        #качаем изображение и добавляем лого
       end
     end #проход по товарам
 
@@ -264,13 +265,18 @@
     end
   end
 
-  def download_image(sku)
+  def download_image_add_logo(sku)
     url = sima_image_url + sku +".jpg"
     file_name = IMAGE_PATH_ORIGINAL + sku +".jpg"
     if !File.exists?(file_name) or File.zero?(file_name)
       begin
+
         open(file_name, 'wb') do |file|
-          file << open(url).read
+          if PROXY.empty?
+            file << open(url).read
+            else
+            file << open(url, :proxy => PROXY).read
+          end
         end
       rescue OpenURI::HTTPError => the_error
 
