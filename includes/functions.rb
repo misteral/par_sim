@@ -23,8 +23,8 @@
       # some clean up work goes here and then..
       the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
       # the_error.message is the numeric code and text in a string
-      @log.error "Whoops got a bad status code #{the_error.message} Catalog download fail"
-      abort("Catalog download fail")
+      $log.error "Whoops got a bad status code #{the_error.message} file download fail, status #{the_status}"
+      abort("File #{url} download fail")
       end
       #do_something_with_status(the_status)
 
@@ -255,4 +255,40 @@
 
   def re_swap_sku(sku)
     sku = sku[1..sku.size-1].reverse
+  end
+
+  def create_folders(provider,path)
+    if provider == "file"
+      Dir.mkdir(IMAGE_PATH+'original') unless File.exists?(IMAGE_PATH+'original')
+      Dir.mkdir(IMAGE_PATH+'with_logo') unless File.exists?(IMAGE_PATH+'with_logo')
+    end
+  end
+
+  def download_image(sku)
+    url = sima_image_url + sku +".jpg"
+    file_name = IMAGE_PATH_ORIGINAL + sku +".jpg"
+    if !File.exists?(file_name) or File.zero?(file_name)
+      begin
+        open(file_name, 'wb') do |file|
+          file << open(url).read
+        end
+      rescue OpenURI::HTTPError => the_error
+
+      the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
+      # the_error.message is the numeric code and text in a string
+      $log.error "Whoops got a bad status code #{the_error.message} image file download fail, status #{the_status}"
+      abort("image #{url} download fail")
+      end
+      add_logo_and_copy_to_with_logo_folder(sku)
+    end
+  end
+
+  def add_logo_and_copy_to_with_logo_folder(sku)
+    original_file = IMAGE_PATH_ORIGINAL + sku +".jpg"
+    save_filename = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
+    if !File.exists?(save_filename) or File.zero?(save_filename)
+      clown = Magick::Image.read(original_file).first
+      clown = clown.composite(LOGO_IMAGE, 20, 20, Magick::OverCompositeOp)
+      clown.write(save_filename)
+    end
   end

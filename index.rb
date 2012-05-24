@@ -7,12 +7,14 @@ require 'curb'
 require 'logger'
 require 'mysql2'
 require 'csv'
+require 'RMagick'
 
+ROOT_PATH = File.dirname(__FILE__)
 Dir[File.dirname(__FILE__)+"/includes/*.rb"].each {|file| require file }
 
 #--------CONSTANTS---------------
-ROOT_PATH = File.dirname(__FILE__)
 url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
+
 #--------/CONSTANTS---------------
 
 #--------FIRST INIT------------------
