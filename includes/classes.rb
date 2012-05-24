@@ -3,7 +3,7 @@ class MyMySQL
   def initialize (host,user,pass, db)
     begin
       @@con = Mysql2::Client.new(:host=>host,:username=>user, :password => pass, :database=> db)
-      q="create table IF NOT EXISTS sundmart.jos_al_import (
+      q="create table IF NOT EXISTS jos_al_import (
         product_id int not null,
         product_parent_id int not null default 0,
         product_sku varchar(64),
@@ -25,9 +25,6 @@ class MyMySQL
         package int,
         primary key (product_id)
       );
-      create index idx_product_product_id on sundmart.jos_al_import (product_id);
-      create index idx_product_sku on sundmart.jos_al_import (product_sku);
-      create index idx_product_name on sundmart.jos_al_import (product_name);
       "
       @@con.query q
       q= "truncate jos_al_import"
