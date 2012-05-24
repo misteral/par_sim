@@ -3,7 +3,7 @@ class MyMySQL
   def initialize (host,user,pass, db)
     begin
       @@con = Mysql2::Client.new(:host=>host,:username=>user, :password => pass, :database=> db)
-      q="create table sundmart.jos_al_import IF NOT EXIST(
+      q="create table IF NOT EXISTS sundmart.jos_al_import (
         product_id int not null,
         product_parent_id int not null default 0,
         product_sku varchar(64),
@@ -49,6 +49,7 @@ class MyMySQL
     options[:product_desc] ||= ""
     options[:product_margin] ||= 1.8
     options[:tip_tov] ||= 0
+    options[:package] ||= 0
     options[:product_name] = @@con.escape(options[:product_name])
 
     #перевернем sku
