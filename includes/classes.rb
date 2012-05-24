@@ -3,6 +3,33 @@ class MyMySQL
   def initialize (host,user,pass, db)
     begin
       @@con = Mysql2::Client.new(:host=>host,:username=>user, :password => pass, :database=> db)
+      q="create table sundmart.jos_al_import IF NOT EXIST(
+        product_id int not null,
+        product_parent_id int not null default 0,
+        product_sku varchar(64),
+        product_desc text(65535),
+        product_full_image varchar(255),
+        product_url varchar(255),
+        product_name varchar(100),
+        product_vendor varchar(100),
+        product_isgroup bit not null default 0,
+        product_status smallint,
+        product_date_add datetime,
+        product_ed varchar(20),
+        product_min varchar(20),
+        product_ost varchar(50),
+        product_price float(12, 0),
+        product_margin float(12, 0) default 1.8,
+        tip_tov int,
+        category varchar(255),
+        package int,
+        primary key (product_id)
+      );
+      create index idx_product_product_id on sundmart.jos_al_import (product_id);
+      create index idx_product_sku on sundmart.jos_al_import (product_sku);
+      create index idx_product_name on sundmart.jos_al_import (product_name);
+      "
+      @@con.query q
       q= "truncate jos_al_import"
       @@con.query q
     rescue Mysql2::Error => e
@@ -44,7 +71,8 @@ class MyMySQL
               product_margin,
               product_ost,
               product_full_image,
-              tip_tov
+              tip_tov,
+              package
               )
 
               values ('#{options[:product_name]}',
@@ -61,7 +89,8 @@ class MyMySQL
                       #{options[:product_margin]},
                       '#{options[:product_ost]}',
                       '#{options[:product_full_image]}',
-                      #{options[:tip_tov]}
+                      #{options[:tip_tov]},
+                      #{options[:package]}
     );"
     begin
     @@con.query q

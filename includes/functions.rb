@@ -175,7 +175,8 @@
 
       pre_price_min = pre_price_min.gsub(/выбрать цвет/,"")
       if pre_price_min.include? ("по")
-        pis[:product_full_image] = pre_price_min_d   #ход конем  product_full_image - кратность
+        pis[:package] = pre_price_min_d
+
         pis[:product_min] = pre_price_min_d
       end
       if pre_price_min.include? ("минимум")
@@ -242,8 +243,10 @@
       #заносим в базу товар
       if !skip
         pr_skip = pr_skip+1
+        pis[:product_full_image] = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
         @mmy.insert_al(pis)
         #качаем изображение и добавляем лого
+        download_image_add_logo(re_swap_sku(pis[:product_sku]))
       end
     end #проход по товарам
 
@@ -260,6 +263,7 @@
 
   def create_folders(provider,path)
     if provider == "file"
+      Dir.mkdir(IMAGE_PATH) unless File.exists?(IMAGE_PATH)
       Dir.mkdir(IMAGE_PATH+'original') unless File.exists?(IMAGE_PATH+'original')
       Dir.mkdir(IMAGE_PATH+'with_logo') unless File.exists?(IMAGE_PATH+'with_logo')
     end
@@ -285,8 +289,8 @@
       $log.error "Whoops got a bad status code #{the_error.message} image file download fail, status #{the_status}"
       abort("image #{url} download fail")
       end
-      add_logo_and_copy_to_with_logo_folder(sku)
     end
+    add_logo_and_copy_to_with_logo_folder(sku)
   end
 
   def add_logo_and_copy_to_with_logo_folder(sku)
@@ -294,7 +298,8 @@
     save_filename = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
     if !File.exists?(save_filename) or File.zero?(save_filename)
       clown = Magick::Image.read(original_file).first
-      clown = clown.composite(LOGO_IMAGE, 20, 20, Magick::OverCompositeOp)
+      logo = Magick::Image.read(LOGO_IMAGE).first
+      clown = clown.composite(logo, 0, 0, Magick::OverCompositeOp)
       clown.write(save_filename)
     end
   end
