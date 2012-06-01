@@ -243,7 +243,7 @@
       #заносим в базу товар
       if !skip
         pr_skip = pr_skip+1
-        pis[:product_full_image] = IMAGE_PATH_WITH_LOGO + swap_sku(pis[:product_sku]) +".jpg"
+        pis[:product_full_image] = swap_sku(pis[:product_sku]) +".jpg"
         @mmy.insert_al(pis)
         #качаем изображение и добавляем лого
         download_image_add_logo(re_swap_sku(pis[:product_sku]))
