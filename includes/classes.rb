@@ -4,7 +4,7 @@ class MyMySQL
     begin
       @@con = Mysql2::Client.new(:host=>host,:username=>user, :password => pass, :database=> db)
       q="create table IF NOT EXISTS jos_al_import (
-        product_id int not null,
+        product_id int not null AUTO_INCREMENT,
         product_parent_id int not null default 0,
         product_sku varchar(64),
         product_desc text(65535),
@@ -24,8 +24,11 @@ class MyMySQL
         category varchar(255),
         package int,
         primary key (product_id)
-      );
+      ) DEFAULT CHARSET=utf8;
       "
+
+
+
       @@con.query q
       q= "truncate jos_al_import"
       @@con.query q
