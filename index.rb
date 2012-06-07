@@ -18,7 +18,7 @@ url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
 #--------/CONSTANTS---------------
 
 #--------FIRST INIT------------------
-$log = Logger.new(ROOT_PATH+"/log/log.txt", 'daily')
+$log = Logger.new(LOG_PATH+"log_sima.txt", 'daily')
 @mmy = MyMySQL.new(M_HOST, M_USER, M_PASS, M_DB)
 
 #log.debug "Log file created"
@@ -95,4 +95,8 @@ puts ("Category 2 lvl for parsing "+lvl1.size.to_s)
 lvl3 = parce_category(lvl2,3,true)
 #$log.debug ("Category 3 lvl for parsing "+lvl2.size.to_s)
 #puts ("Category 3 lvl for parsing "+lvl2.size.to_s)
+
+#выгрузим все в csv
+
+save_to_csv
 

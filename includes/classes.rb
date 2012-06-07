@@ -38,6 +38,19 @@ class MyMySQL
     end
   end
 
+  def get_result
+    qu = '
+      select tov.product_sku as sku, tov.product_desc as desk, tov.product_full_image as image, tov.product_name as name, tov.product_price as price,
+      tov.product_margin as margin,CONCAT_WS(" > ", lv2.product_name, lv1.product_name,lv0.product_name) as category
+      from jos_al_import tov
+      left join jos_al_import lv0 ON tov.product_parent_id =lv0.product_id
+      left join jos_al_import lv1 ON lv0.product_parent_id =lv1.product_id
+      left join jos_al_import lv2 ON lv1.product_parent_id =lv2.product_id
+      where tov.product_isgroup = false and tov.product_price > 50 and tov.product_min = 1;
+      '
+    res = @@con.query(qu)
+  end
+
   def insert_al(options={})
     options[:product_status] ||= 2
     options[:product_paernt_id] ||= 0

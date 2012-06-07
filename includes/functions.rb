@@ -243,10 +243,10 @@
       #заносим в базу товар
       if !skip
         pr_skip = pr_skip+1
-        pis[:product_full_image] = swap_sku(pis[:product_sku]) +".jpg"
+        file_image = download_image_add_logo(pis[:product_sku])
+        pis[:product_full_image] = file_image if file_image
         @mmy.insert_al(pis)
         #качаем изображение и добавляем лого
-        download_image_add_logo(re_swap_sku(pis[:product_sku]))
       end
     end #проход по товарам
 
@@ -287,13 +287,13 @@
       the_status = the_error.io.status[0] # => 3xx, 4xx, or 5xx
       # the_error.message is the numeric code and text in a string
       $log.error "Whoops got a bad status code #{the_error.message} image file download fail, status #{the_status}"
-      abort("image #{url} download fail")
+      puts("image #{url} with sku #{sku} download fail")
       end
     end
     add_logo_and_copy_to_with_logo_folder(sku)
   end
 
-  def self.add_logo_and_copy_to_with_logo_folder(sku)
+  def add_logo_and_copy_to_with_logo_folder(sku)
     begin
       original_file = IMAGE_PATH_ORIGINAL + sku +".jpg"
       save_filename = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
@@ -308,7 +308,24 @@
       end
       return save_filename
     rescue Exception => e
-      @log.error "Unable to save_images data #{save_filename} because #{e.message}"
+      $log.error "Unable to save_images data #{save_filename} because #{e.message}"
     end
   end
 
+
+  def upload_to_csv (arr,file)
+    file = ROOT_PATH + file
+    #fr = File.new(file, "w+")
+    File.delete(file) if File.exist? file
+    File.open(file,'w'){ |f| f << arr.map{ |row| row.join("\t") }.join("\n") }
+  end
+
+ def save_to_csv
+      reu = @mmy.get_result
+      arr_tov = []
+      reu.each(:as => :array) do |row|
+        arr_tov << row
+      end
+      exf =  EXPORT_FILE
+      upload_to_csv(arr_tov, exf)
+  end
