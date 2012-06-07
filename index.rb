@@ -9,7 +9,7 @@ require 'mysql2'
 require 'csv'
 require 'RMagick'
 
-ROOT_PATH = File.dirname(__FILE__)
+#ROOT_PATH = File.dirname(__FILE__)
 Dir[File.dirname(__FILE__)+"/includes/*.rb"].each {|file| require file }
 
 #--------CONSTANTS---------------
@@ -95,3 +95,4 @@ puts ("Category 2 lvl for parsing "+lvl1.size.to_s)
 lvl3 = parce_category(lvl2,3,true)
 #$log.debug ("Category 3 lvl for parsing "+lvl2.size.to_s)
 #puts ("Category 3 lvl for parsing "+lvl2.size.to_s)
+

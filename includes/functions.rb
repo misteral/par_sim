@@ -37,7 +37,7 @@
 
 
   def multy_get_from_hash(urls,path = "",proxy="")
-    path_for = ROOT_PATH+"/dw-sima/"+path
+    path_for = FILES_PATH+path
     Dir.mkdir(path_for) unless File.exists?(path_for) #создание директории когда ее нет
 
     urls.each do |key, value|
@@ -293,13 +293,22 @@
     add_logo_and_copy_to_with_logo_folder(sku)
   end
 
-  def add_logo_and_copy_to_with_logo_folder(sku)
-    original_file = IMAGE_PATH_ORIGINAL + sku +".jpg"
-    save_filename = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
-    if !File.exists?(save_filename) or File.zero?(save_filename)
-      clown = Magick::Image.read(original_file).first
-      logo = Magick::Image.read(LOGO_IMAGE).first
-      clown = clown.composite(logo, 0, 0, Magick::OverCompositeOp)
-      clown.write(save_filename)
+  def self.add_logo_and_copy_to_with_logo_folder(sku)
+    begin
+      original_file = IMAGE_PATH_ORIGINAL + sku +".jpg"
+      save_filename = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
+      if !File.exists?(save_filename) or File.zero?(save_filename)
+        #white_bg = Magick::Image.new(600, 600)
+        clown = Magick::Image.read(original_file).first
+        logo = Magick::Image.read(LOGO_IMAGE).first
+        clown = clown.composite(logo, 0, 0, Magick::OverCompositeOp)
+        #clown.resize(600,600)
+        clown.write(save_filename)
+        system ("convert #{save_filename} -resize 600x600 -size 600x600 xc:#fff +swap -gravity center -composite #{save_filename}")
+      end
+      return save_filename
+    rescue Exception => e
+      @log.error "Unable to save_images data #{save_filename} because #{e.message}"
     end
   end
+
