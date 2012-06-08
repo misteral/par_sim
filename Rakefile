@@ -27,3 +27,11 @@ task :test_app do
   ENV['LIB_NAME'] = 'spree_import_sima'
   Rake::Task['common:test_app'].invoke
 end
+
+
+ desc "Load our suvenir and igr"
+  task :import_sima  do
+    #require 'my_import_products'
+    ImportSima.new.perform
+  end
+
