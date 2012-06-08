@@ -1,24 +1,24 @@
 # encoding: utf-8
 
-module ImportSima
 #require 'spree_core'
-#require 'spree_import_sima/engine'
+  require 'spree_import_sima/engine'
 
 #require 'rubygems'
-require 'open-uri'
-require 'nokogiri'
-require 'curb'
-require 'logger'
-require 'mysql2'
-require 'csv'
-require 'RMagick'
+  require 'open-uri'
+  require 'nokogiri'
+  require 'curb'
+  require 'logger'
+  require 'mysql2'
+  require 'csv'
+  require 'RMagick'
 
 #ROOT_PATH = File.dirname(__FILE__)
-Dir[File.dirname(__FILE__)+"/includes/*.rb"].sort.each {|file| require file }
+  Dir[File.dirname(__FILE__)+"/includes/*.rb"].sort.each {|file| require file }
 
 
+module ImportSima
 
-def perform
+  def perform
     #--------CONSTANTS---------------
     url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
 
@@ -74,7 +74,7 @@ def perform
         'Обучающие и развивающие игрушки',
         'Деревянная игрушка',
         'Палатки и корзины для игрушек',
-            #детское творчество
+        #детское творчество
         'Всё для лепки', 'Доски магнитные и магниты','Кукольный театр','Музыка','Наборы "Сделай сам"','Рисование', 'Рукоделие','Аппликации','Kukumba','Украшения своими руками',
         'Панно', 'Термомозаика', 'Гравюры из металлопластика','Изделия из дерева', 'Поделки из бумаги'
     ]
@@ -94,8 +94,8 @@ def perform
     lvl2 = parce_category(lvl1,2)
     #--------------3 уровень ----------------------
     #lvl2.keep_if do |key|
-      #key[:product_name] == 'Куклы коллекционные от 30 см'
-       #or key[:product_name] == 'День автомобилиста'
+    #key[:product_name] == 'Куклы коллекционные от 30 см'
+    #or key[:product_name] == 'День автомобилиста'
     #end
     $log.debug ("Category 2 lvl for parsing "+lvl1.size.to_s)
     puts ("Category 2 lvl for parsing "+lvl1.size.to_s)
@@ -107,7 +107,6 @@ def perform
 
     save_to_csv
 
- end
+  end
 
 end
-

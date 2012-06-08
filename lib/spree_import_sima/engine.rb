@@ -1,7 +1,7 @@
 module SpreeImportSima
   class Engine < Rails::Engine
     engine_name 'spree_import_sima'
-    isolate_namespace Spree
+    #isolate_namespace Spree
 
     config.autoload_paths += %W(#{config.root}/lib)
 

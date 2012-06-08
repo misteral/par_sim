@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_import_sima'
-  s.version     = '1.1.1'
+  s.version     = '1.1.2'
   s.summary     = 'Импорт Симы'
   s.description = 'Импорт Симы'
   s.required_ruby_version = '>= 1.8.7'
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 1.1.1'
+  #s.add_dependency 'spree_core', '~> 1.1.1'
   s.add_dependency('nokogiri','>= 1.5.2')
   s.add_dependency('rmagick','>= 2.13.1')
   s.add_dependency('curb','>= 0.8.0')
