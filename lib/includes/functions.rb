@@ -6,7 +6,7 @@ module ImportSima
   # proxy - прокси
   # path - добавочный path/для уровней
   def self.open_or_download(url,path="",proxy="")
-    path_for = ROOT_PATH+"/dw-sima/"+path
+    path_for = FILES_PATH+path
     Dir.mkdir(path_for) unless File.exists?(path_for)
     url_name = url[:url][/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")
     file_name = path_for+url_name+".html"
