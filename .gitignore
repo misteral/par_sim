@@ -1,5 +1,10 @@
+\#*
+*~
+.#*
+.DS_Store
 .idea/
-dw-sima/
-log/
-.rvmrc
-local_const.rb
+.project
+tmp
+nbproject
+*.swp
+spec/dummy
