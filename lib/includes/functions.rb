@@ -316,20 +316,27 @@ module ImportSima
 
 
   def self.upload_to_csv (arr,file)
-    file = ROOT_PATH + file
-    #fr = File.new(file, "w+")
-    File.delete(file) if File.exist? file
-    File.open(file,'w'){ |f| f << arr.map{ |row| row.join("\t") }.join("\n") }
+    begin
+      file = ROOT_PATH + file
+      #fr = File.new(file, "w+")
+      File.delete(file) if File.exist? file
+      File.open(file,'w'){ |f| f << arr.map{ |row| row.join("\t") }.join("\n") }
+      return file
+     rescue Exception => e
+       $log.error "Unable to save_csv data to  #{file} because #{e.message}"
+    end
   end
 
  def self.save_to_csv
-      reu = @mmy.get_result
-      arr_tov = []
-      reu.each(:as => :array) do |row|
-        arr_tov << row
-      end
-      exf =  EXPORT_FILE
-      upload_to_csv(arr_tov, exf)
+
+  reu = @mmy.get_result
+  arr_tov = []
+  reu.each(:as => :array) do |row|
+    arr_tov << row
+  end
+  exf =  EXPORT_FILE
+  file = upload_to_csv(arr_tov, exf)
+  return file
  end
 end
 
