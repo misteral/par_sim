@@ -32,7 +32,7 @@ module ImportSima
   create_folder(provider,IMAGE_PATH)
   create_folder(provider,IMAGE_PATH_ORIGINAL)
   create_folder(provider,IMAGE_PATH_WITH_LOGO)
-  abort
+
 
   def sima_image_url
     "http://st#{[1,2,3,4,5].sample.to_s}.sima-land.ru/images/photo/big/"
