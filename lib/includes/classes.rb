@@ -1,4 +1,5 @@
 module ImportSima
+
   class MyMySQL
      #attr_accessor :host, :user, :password
     def initialize (host,user,pass, db)
@@ -127,3 +128,4 @@ module ImportSima
   end #end class MySQL
 
 end
+

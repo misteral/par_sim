@@ -1,5 +1,7 @@
 # encoding: utf-8
+
 module ImportSima
+
   #url - хеш значений :name - имя :url - откуда качать
   # proxy - прокси
   # path - добавочный path/для уровней
@@ -330,3 +332,4 @@ module ImportSima
       upload_to_csv(arr_tov, exf)
  end
 end
+
