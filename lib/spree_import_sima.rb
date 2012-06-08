@@ -1,9 +1,10 @@
 # encoding: utf-8
 
-require 'spree_core'
-require 'spree_import_sima/engine'
+module ImportSima
+#require 'spree_core'
+#require 'spree_import_sima/engine'
 
-require 'rubygems'
+#require 'rubygems'
 require 'open-uri'
 require 'nokogiri'
 require 'curb'
@@ -13,11 +14,11 @@ require 'csv'
 require 'RMagick'
 
 #ROOT_PATH = File.dirname(__FILE__)
-Dir[File.dirname(__FILE__)+"/includes/*.rb"].each {|file| require file }
+Dir[File.dirname(__FILE__)+"/includes/*.rb"].sort.each {|file| require file }
 
-module ImportSima
 
-  def perform
+
+def perform
     #--------CONSTANTS---------------
     url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
 
