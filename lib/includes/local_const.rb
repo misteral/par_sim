@@ -34,7 +34,7 @@ module ImportSima
   create_folder(provider,IMAGE_PATH_WITH_LOGO)
 
 
-  def sima_image_url
+  def self.sima_image_url
     "http://st#{[1,2,3,4,5].sample.to_s}.sima-land.ru/images/photo/big/"
   end
 

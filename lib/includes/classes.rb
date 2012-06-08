@@ -69,7 +69,7 @@ module ImportSima
 
       #перевернем sku
 
-      options[:product_sku] = swap_sku(options[:product_sku]) if options[:product_sku]
+      options[:product_sku] = ImportSima::swap_sku(options[:product_sku]) if options[:product_sku]
 
 
       q = "insert into jos_al_import (

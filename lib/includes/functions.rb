@@ -5,7 +5,7 @@ module ImportSima
   #url - хеш значений :name - имя :url - откуда качать
   # proxy - прокси
   # path - добавочный path/для уровней
-  def open_or_download(url,path="",proxy="")
+  def self.open_or_download(url,path="",proxy="")
     path_for = ROOT_PATH+"/dw-sima/"+path
     Dir.mkdir(path_for) unless File.exists?(path_for)
     url_name = url[:url][/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")
@@ -38,7 +38,7 @@ module ImportSima
   end
 
 
-  def multy_get_from_hash(urls,path = "",proxy="")
+  def self.multy_get_from_hash(urls,path = "",proxy="")
     path_for = FILES_PATH+path
     Dir.mkdir(path_for) unless File.exists?(path_for) #создание директории когда ее нет
 
@@ -108,7 +108,7 @@ module ImportSima
 
   #качает затем парсит заданный уровень,, заносит в базу их и возвращает массив со следующим уровнем
   # если ласт парсит как последнюю категорию и заносит товар
-  def parce_category(list_cat_arr,lvl, last = false)
+  def self.parce_category(list_cat_arr,lvl, last = false)
     pr2_hash={}
     if last
       pr_count = 0
@@ -149,7 +149,7 @@ module ImportSima
     end
   end
 
-  def parce_product(h,lvl,returned_id)
+  def self.parce_product(h,lvl,returned_id)
     pr_count = 0
     pr_skip = 0
     if h[:product_url].include? ('igrushki')   #определим тип товара игрушка или сувенирка
@@ -255,15 +255,15 @@ module ImportSima
     arr = {:count =>pr_count, :skip => pr_skip}
   end  #parse_product
 
-  def swap_sku(sku)
+  def self.swap_sku(sku)
       sku = "1"+sku.to_s.reverse
   end
 
-  def re_swap_sku(sku)
+  def self.re_swap_sku(sku)
     sku = sku[1..sku.size-1].reverse
   end
 
-  def create_folders(provider,path)
+  def self.create_folders(provider,path)
     if provider == "file"
       Dir.mkdir(IMAGE_PATH) unless File.exists?(IMAGE_PATH)
       Dir.mkdir(IMAGE_PATH+'original') unless File.exists?(IMAGE_PATH+'original')
@@ -271,7 +271,7 @@ module ImportSima
     end
   end
 
-  def download_image_add_logo(sku)
+  def self.download_image_add_logo(sku)
     url = sima_image_url + sku +".jpg"
     file_name = IMAGE_PATH_ORIGINAL + sku +".jpg"
     if !File.exists?(file_name) or File.zero?(file_name)
@@ -295,7 +295,7 @@ module ImportSima
     add_logo_and_copy_to_with_logo_folder(sku)
   end
 
-  def add_logo_and_copy_to_with_logo_folder(sku)
+  def self.add_logo_and_copy_to_with_logo_folder(sku)
     begin
       original_file = IMAGE_PATH_ORIGINAL + sku +".jpg"
       save_filename = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
@@ -315,14 +315,14 @@ module ImportSima
   end
 
 
-  def upload_to_csv (arr,file)
+  def self.upload_to_csv (arr,file)
     file = ROOT_PATH + file
     #fr = File.new(file, "w+")
     File.delete(file) if File.exist? file
     File.open(file,'w'){ |f| f << arr.map{ |row| row.join("\t") }.join("\n") }
   end
 
- def save_to_csv
+ def self.save_to_csv
       reu = @mmy.get_result
       arr_tov = []
       reu.each(:as => :array) do |row|

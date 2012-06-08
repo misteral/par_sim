@@ -18,7 +18,7 @@
 
 module ImportSima
 
-  def perform
+  def self.perform
     #--------CONSTANTS---------------
     url_catalog={:name=>"catalog", :url=>"http://www.sima-land.ru/catalog.html"}
 
