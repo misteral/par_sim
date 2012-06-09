@@ -1,8 +1,8 @@
 # encoding: utf-8
 module ImportSima
 
-  PROXY = 'http://10.44.33.209:842'
-  #PROXY = ''
+  #PROXY = 'http://10.44.33.209:842'
+  PROXY = ''
   M_HOST = "localhost"
   M_USER = "root"
   M_PASS = "fduecn"
