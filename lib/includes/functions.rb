@@ -39,70 +39,74 @@ module ImportSima
 
 
   def self.multy_get_from_hash(urls,path = "",proxy="")
-    path_for = FILES_PATH+path
-    Dir.mkdir(path_for) unless File.exists?(path_for) #создание директории когда ее нет
+    begin
+      path_for = FILES_PATH+path
+      Dir.mkdir(path_for) unless File.exists?(path_for) #создание директории когда ее нет
 
-    urls.each do |key, value|
-      #puts "ds"
-      url_name = value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")
-      file_name = path_for+url_name+".html"
-      #file_name = path_for+key+".html"
-      if File.exists?(file_name) and !File.zero?(file_name)
-        urls.delete(key)
+      urls.each do |key, value|
+        #puts "ds"
+        url_name = value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")
+        file_name = path_for+url_name+".html"
+        #file_name = path_for+key+".html"
+        if File.exists?(file_name) and !File.zero?(file_name)
+          urls.delete(key)
+        end
       end
-    end
-    all_useragents = [
-   	"Opera/9.23 (Windows NT 5.1; U; ru)",
-   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.4;MEGAUPLOAD 1.0",
-   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; Alexa Toolbar; MEGAUPLOAD 2.0; rv:1.8.1.7) Gecko/20070914 Firefox/2.0.0.7;MEGAUPLOAD 1.0",
-   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
-   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
-   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
-   	"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; Maxthon; SLCC1; .NET CLR 2.0.50727; .NET CLR 3.0.04506; Media Center PC 5.0; InfoPath.1)",
-   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
-   	"Opera/9.10 (Windows NT 5.1; U; ru)",
-   	"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1; aggregator:Tailrank; http://tailrank.com/robot) Gecko/20021130",
-   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
-   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
-   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
-   	"Opera/9.22 (Windows NT 6.0; U; ru)",
-   	"Opera/9.22 (Windows NT 6.0; U; ru)",
-   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
-   	"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",
-   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; MRSPUTNIK 1, 8, 0, 17 HW; MRA 4.10 (build 01952); .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
-   	"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)",
-   	"Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9"
-   	];
-    if !urls.empty?
-    m = Curl::Multi.new
-    m.pipeline = true
-    #pbar = ProgressBar.new("Download urls", urls.size)
+      all_useragents = [
+      "Opera/9.23 (Windows NT 5.1; U; ru)",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.4;MEGAUPLOAD 1.0",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; Alexa Toolbar; MEGAUPLOAD 2.0; rv:1.8.1.7) Gecko/20070914 Firefox/2.0.0.7;MEGAUPLOAD 1.0",
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+      "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; Maxthon; SLCC1; .NET CLR 2.0.50727; .NET CLR 3.0.04506; Media Center PC 5.0; InfoPath.1)",
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+      "Opera/9.10 (Windows NT 5.1; U; ru)",
+      "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.2.1; aggregator:Tailrank; http://tailrank.com/robot) Gecko/20021130",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; MyIE2; Maxthon)",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
+      "Opera/9.22 (Windows NT 6.0; U; ru)",
+      "Opera/9.22 (Windows NT 6.0; U; ru)",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.8) Gecko/20071008 Firefox/2.0.0.8",
+      "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; MRSPUTNIK 1, 8, 0, 17 HW; MRA 4.10 (build 01952); .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.8.1.9) Gecko/20071025 Firefox/2.0.0.9"
+      ];
+      if !urls.empty?
+      m = Curl::Multi.new
+      m.pipeline = true
+      #pbar = ProgressBar.new("Download urls", urls.size)
 
-    m.max_connects = 100
-    #responses = {}
-    urls.each_pair do |key, value|
-#      responses[value] = ""
-      c = Curl::Easy.new(value) do|curl|
-        curl.follow_location = true
-        curl.proxy_url = proxy if !proxy.empty?
-        curl.connect_timeout = 100
-        curl.headers["Referer"]= "http://www.yandex.ru"
-        curl.useragent = all_useragents.sample
-        curl.on_body {|d| File.open(path_for+value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")+'.html', 'a') {|f| f.write d} }
-        curl.on_failure {|response, err| $log.error "Erroor download #{key}. We have failure.  The response code is #{response.response_code}. Error is: #{err.inspect}"}
-        #curl.on_progress {|dl_total, dl_now, ul_total, ul_now| puts "dl_total-#{dl_total} --- dl_now-#{dl_now}";sleep 3; puts}
+      m.max_connects = 100
+      #responses = {}
+      urls.each_pair do |key, value|
+  #      responses[value] = ""
+        c = Curl::Easy.new(value) do|curl|
+          curl.follow_location = true
+          curl.proxy_url = proxy if !proxy.empty?
+          curl.connect_timeout = 100
+          curl.headers["Referer"]= "http://www.yandex.ru"
+          curl.useragent = all_useragents.sample
+          curl.on_body {|d| File.open(path_for+value[/(?<=http:\/\/www.sima-land.ru\/)(.+)/].gsub(/\//, "_").gsub(/\.html/,"")+'.html', 'a') {|f| f.write d} }
+          curl.on_failure {|response, err| $log.error "Erroor download #{value}. We have failure.  The response code is #{response.response_code}. Error is: #{err.inspect}"}
+          #curl.on_progress {|dl_total, dl_now, ul_total, ul_now| puts "dl_total-#{dl_total} --- dl_now-#{dl_now}";sleep 3; puts}
+        end
+        m.add(c)
       end
-      m.add(c)
-    end
-    m.perform
+      m.perform
 
-    #urls.each do|url|
-    #   puts responses[url]
-    # end
+      #urls.each do|url|
+      #   puts responses[url]
+      # end
 
-    true
-    else
-      false #файлы все существуют ничего качать не нужно
+      true
+      else
+        false #файлы все существуют ничего качать не нужно
+      end
+    rescue Exception => e
+      $log.error "Unable to download data because #{e.message}"
     end
   end
 

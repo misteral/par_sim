@@ -1,4 +1,4 @@
-
+# encoding: utf-8
 module ImportSima
 
   PROXY = 'http://10.44.33.209:842'
@@ -14,7 +14,7 @@ module ImportSima
   IMAGE_PATH = ROOT_PATH+"images_sima/"
   IMAGE_PATH_ORIGINAL = IMAGE_PATH+'original/'
   IMAGE_PATH_WITH_LOGO = IMAGE_PATH+'with_logo/'
-  LOGO_IMAGE = ROOT_PATH+"/logo/chaiknet_logo.psd"
+  LOGO_IMAGE = ROOT_PATH+"/logo/chaiknet_logo1.psd"
   EXPORT_FILE = "sima_export.csv"
 
   #проверим есть ли и создадим каталоги
