@@ -304,13 +304,19 @@ module ImportSima
       original_file = IMAGE_PATH_ORIGINAL + sku +".jpg"
       save_filename = IMAGE_PATH_WITH_LOGO + swap_sku(sku) +".jpg"
       if !File.exists?(save_filename) or File.zero?(save_filename)
-        #white_bg = Magick::Image.new(600, 600)
+        white_bg = Magick::Image.new(600, 600)
         clown = Magick::Image.read(original_file).first
         logo = Magick::Image.read(LOGO_IMAGE).first
         clown = clown.composite(logo, 0, 0, Magick::OverCompositeOp)
         #clown.resize(600,600)
+        clown.change_geometry!('600x600') { |cols, rows, img|
+        img.resize!(cols, rows)
+        }
+        clown = white_bg.composite(clown, Magick::CenterGravity, Magick::OverCompositeOp)
         clown.write(save_filename)
-        system ("convert #{save_filename} -resize 600x600 -size 600x600 xc:#fff +swap -gravity center -composite #{save_filename}")
+
+        #system ("convert #{save_filename} -resize 600x600 -size 600x600 xc:#fff +swap -gravity center -composite #{save_filename}")
+
       end
       return save_filename
     rescue Exception => e
